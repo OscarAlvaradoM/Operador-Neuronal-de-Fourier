@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import glob
 
-def plot_burger(array, color = "#ffe800", color2 = "#ff00ff", name = None):
+def plot_burger(array, color = "#ffe800", color2 = "#ff00ff", name = None, trsprnt = True):
     fig, ax = plt.subplots(2,1,figsize = (10,5), sharex = True)
     ax[0].imshow(array.reshape(1,1024), cmap="plasma", aspect="auto")
     ax[0].set_yticks([])
@@ -18,7 +18,7 @@ def plot_burger(array, color = "#ffe800", color2 = "#ff00ff", name = None):
     ax[1].set_xlabel("Longitud", fontsize = 20, color = color)
     ax[1].set_ylabel("Valor numérico", fontsize = 20, color = color)
     if name:
-        fig.savefig(f"figs/{name}.png", transparent = True, bbox_inches = "tight")
+        fig.savefig(f"../figs/{name}.png", transparent = trsprnt, bbox_inches = "tight")
     return fig, ax
     
 def plot_navierstokes(predicted, true, t, color = "#ffe800", color2 = "#212121ff"):
@@ -42,14 +42,14 @@ def plot_navierstokes(predicted, true, t, color = "#ffe800", color2 = "#212121ff
     plt.setp(plt.getp(cbar.ax.axes, "yticklabels"), color = color)
     return fig, ax    
 
-def plot_many(predicted, true, epochs, color = "#ffe800"):
+def plot_many(predicted, true, epochs, color = "#ffe800", color2 = "#212121ff", trnsprnt = True):
     for i in range(predicted.shape[-1]):
         if len(str(i)) == 1:
             idx = f"0{i}"
         else:
             idx = i
-        fig, ax = plot_navierstokes(predicted[:,:,i], true[:,:,i], idx, color)
-        fig.savefig(f"figs/predicciones/ns_{epochs}epoch/img_{idx}.png", bbox_inches = 'tight', transparent=False)
+        fig, ax = plot_navierstokes(predicted[:,:,i], true[:,:,i], idx, color, color2)
+        fig.savefig(f"../figs/predicciones/ns_{epochs}epoch/img_{idx}_black.png", bbox_inches = 'tight', transparent=trnsprnt)
 
 def plot_metrics(loss_hist, mse_hist, c="#ffe800", name = None, epoch = 5):
     trn_loss, tst_loss = zip(*loss_hist)
@@ -77,18 +77,18 @@ def plot_metrics(loss_hist, mse_hist, c="#ffe800", name = None, epoch = 5):
         ax[i].spines["right"].set_visible(False)
         ax[i].spines["top"].set_visible(False)
     if name:
-        fig.savefig(f"figs//metrics/{name}.png", transparent = True, bbox_inches = "tight")
+        fig.savefig(f"../figs//metrics/{name}.png", transparent = True, bbox_inches = "tight")
         
 def create_gif(epochs):
     # Create the frames
     frames = []
-    imgs = glob.glob(f"figs/predicciones/ns_{epochs}epoch/*.png")
+    imgs = glob.glob(f"../figs/predicciones/ns_{epochs}epoch/*.png")
     imgs.sort()
     for i in imgs:
         new_frame = Image.open(i)
         frames.append(new_frame)
     # Save into a GIF file that loops forever
-    frames[0].save(f'gifs/{epochs}_epochs.gif', format='GIF',
+    frames[0].save(f'../gifs/{epochs}_epochs.gif', format='GIF',
                     append_images=frames[1:],
                     save_all=True,
                     duration=150, loop=0)
